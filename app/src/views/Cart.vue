@@ -108,10 +108,12 @@
                   <!-- TODO use real match estimates -->
                   <p v-if="clrPredictions[item.grantId]">
                     <span v-for="(clr, index) in clrPredictions[item.grantId]" :key="index">
-                      {{ formatNumber(clr.matching, 2) }} {{ clr.matchingToken.symbol }}
-                      {{ index !== clrPredictions[item.grantId].length - 1 ? '+' : '' }}
-                      <br />
-                      estimated matching
+                      <template v-if="clr.matching >= 0">
+                        {{ formatNumber(clr.matching, 2) }} {{ clr.matchingToken.symbol }}
+                        {{ index !== clrPredictions[item.grantId].length - 1 ? '+' : '' }}
+                        <br />
+                        estimated matching
+                      </template>
                     </span>
                   </p>
                   <p v-else>not in an active round</p>
@@ -136,14 +138,18 @@
         </div>
       </div>
 
-      <div class="py-8 border-b border-grey-100" :class="{ hidden: !showEquivalentContributionAmount }">
+      <div
+        v-if="equivalentContributionAmount >= 0"
+        class="py-8 border-b border-grey-100"
+        :class="{ hidden: !showEquivalentContributionAmount }"
+      >
         <div class="flex gap-x-4 justify-end">
           <span class="text-grey-400">Equivalent to:</span>
           <span>~{{ formatNumber(equivalentContributionAmount, 2) }} DAI</span>
         </div>
       </div>
 
-      <div class="py-8 border-b border-grey-100">
+      <div class="py-8 border-b border-grey-100" v-if="equivalentContributionAmount >= 0">
         <div class="flex gap-x-4 justify-end">
           <span class="text-grey-400">Estimated matching value:</span>
           <span v-if="Object.keys(clrPredictionsByToken).length">
